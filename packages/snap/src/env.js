@@ -7,7 +7,7 @@ function splitOnce(str, pat) {
 
 let env;
 function mutateEnv() {
-  if (typeof wallet === 'undefined') {
+  if (typeof window === 'undefined') {
     const os = require('os');
     const fs = require('fs');
     const path = require('path');
@@ -28,6 +28,8 @@ function mutateEnv() {
     }
 
     env = Object.assign({}, process.env, envFile);
+  } else {
+    env = {};
   }
 }
 

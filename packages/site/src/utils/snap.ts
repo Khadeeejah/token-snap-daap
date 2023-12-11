@@ -64,4 +64,36 @@ export const sendHello = async () => {
   });
 };
 
+type LookedupPrice = {
+  [address: string]: { symbol: string; price: number; decimals: number };
+};
+
+export const priceLookup = async (
+  tokenPair: [string, string],
+): Promise<LookedupPrice> =>
+  (await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: {
+      snapId: defaultSnapOrigin,
+      request: { method: 'price_lookup', params: { tokenPair } },
+    },
+  })) as any;
+
+type IdentifiedToken = {
+  isERC20: boolean;
+  isERC721: boolean;
+  isERC1155: boolean;
+};
+
+export const identifyToken = async (
+  address: string,
+): Promise<IdentifiedToken> =>
+  (await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: {
+      snapId: defaultSnapOrigin,
+      request: { method: 'identify_token', params: { address } },
+    },
+  })) as any;
+
 export const isLocalSnap = (snapId: string) => snapId.startsWith('local:');

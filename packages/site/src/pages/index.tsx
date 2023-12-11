@@ -15,6 +15,8 @@ import {
   getSnap,
   isLocalSnap,
   sendHello,
+  identifyToken,
+  priceLookup,
   shouldDisplayReconnectButton,
 } from '../utils';
 
@@ -133,6 +135,43 @@ const Index = () => {
     }
   };
 
+  const handlePriceLookupClick = async () => {
+    // todo! get the data from both input fields of token 1 and token 2
+    const tokenPair: [string, string] = [
+      document.querySelector<HTMLInputElement>('#lookup-tkn1')?.value ?? '',
+      document.querySelector<HTMLInputElement>('#lookup-tkn2')?.value ?? '',
+    ];
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const response = await priceLookup(tokenPair);
+      console.log('response', response);
+      const priceReport = [
+        [response[tokenPair[0]]?.symbol, response[tokenPair[1]]?.symbol].join(
+          ' / ',
+        ),
+        `Price: ${response[tokenPair[0]]?.price ?? 'Missing Price?'}`,
+      ].join('\n');
+      const priceLabel =
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        document.querySelector<HTMLSpanElement>('#lookup-price')!;
+      priceLabel.innerText = priceReport;
+    } catch (error) {
+      console.error(error);
+      dispatch({ type: MetamaskActions.SetError, payload: error });
+    }
+  };
+
+  const handleIdentifyTokenClick = async () => {
+    const address =
+      document.querySelector<HTMLInputElement>('#check-tkn')?.value ?? '';
+    try {
+      await identifyToken(address);
+    } catch (error) {
+      console.error(error);
+      dispatch({ type: MetamaskActions.SetError, payload: error });
+    }
+  };
+
   return (
     <Container>
       <Heading>
@@ -212,14 +251,37 @@ const Index = () => {
 
         <Card
           content={{
-            title: 'Send Hello message',
+            title: 'Token Type Checker ',
             description:
-              'Display a custom message within a confirmation screen in MetaMask.',
+              'check if a token is either ERC20,ERC721 and ERC1155 token.',
             button: (
-              <SendHelloButton
-                onClick={handleSendHelloClick}
-                disabled={!state.installedSnap}
-              />
+              <>
+                <form id="form">
+                  <label>Token Adresss 1</label>
+                  <input
+                    type="text"
+                    id="lookup-tkn1"
+                    name="lookup-tkn1"
+                    placeholder="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+                    value="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+                  />
+
+                  <label>Token Address 2</label>
+                  <input
+                    type="text"
+                    id="lookup-tkn2"
+                    name="lookup-tkn2"
+                    placeholder="0xF9A2D7E60a3297E513317AD1d7Ce101CC4C6C8F6"
+                    value="0xF9A2D7E60a3297E513317AD1d7Ce101CC4C6C8F6"
+                  />
+
+                  <span id="lookup-price"></span>
+                </form>
+                <SendHelloButton
+                  onClick={handlePriceLookupClick}
+                  disabled={!state.installedSnap}
+                />
+              </>
             ),
           }}
           disabled={!state.installedSnap}
@@ -229,6 +291,7 @@ const Index = () => {
             !shouldDisplayReconnectButton(state.installedSnap)
           }
         />
+
         <Card
           content={{
             title: 'Token Type Checker ',
@@ -237,7 +300,7 @@ const Index = () => {
             button: (
               <>
                 <form id="form">
-                  <label for="check-tkn">Token Adresss</label>
+                  <label>Token Adresss</label>
                   <input
                     type="text"
                     id="check-tkn"
@@ -246,7 +309,7 @@ const Index = () => {
                   />
                 </form>
                 <SendHelloButton
-                  onClick={handleSendHelloClick}
+                  onClick={handleIdentifyTokenClick}
                   disabled={!state.installedSnap}
                 />
               </>

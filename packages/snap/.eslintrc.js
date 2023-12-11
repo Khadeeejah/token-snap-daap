@@ -3,7 +3,7 @@ module.exports = {
 
   globals: {
     snap: 'readonly',
-    window: 'readonly',
+    ethereum: 'readonly',
   },
 
   parserOptions: {

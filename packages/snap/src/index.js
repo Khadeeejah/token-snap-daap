@@ -1,6 +1,6 @@
 const { panel, text } = require('@metamask/snaps-sdk');
 
-// const symbols = require('./symbols');
+const symbols = require('./symbols');
 const token = require('./token');
 const { getTokenPairSpotPrice } = require('./uniswap');
 
@@ -18,6 +18,7 @@ async function lookupHandler(origin, request) {
         text(`Hello, **${origin}**!`),
         text('This custom confirmation is just for display purposes.'),
         text('So you are trying to fetch spot prices for these token address'),
+        text(JSON.stringify(request)),
       ]),
     },
   });
@@ -52,28 +53,27 @@ module.exports.onRpcRequest = async ({ origin, request }) => {
         return { result: await identifyHandler(request.params) };
       default:
     }
-  } catch (_) {
-    // const error = Object.assign(
-    //   { message: err.message, stack: err.stack },
-    //   err[symbols.errorMeta] ? { meta: err[symbols.errorMeta] } : {},
-    //   err[symbols.nestedErrors]
-    //     ? {
-    //         errors: err[symbols.nestedErrors].map((cause) =>
-    //           Object.assign(
-    //             {
-    //               message: cause.message,
-    //               stack: cause.stack,
-    //             },
-    //             cause[symbols.errorMeta]
-    //               ? { meta: cause[symbols.errorMeta] }
-    //               : {},
-    //           ),
-    //         ),
-    //       }
-    //     : {},
-    // );
-    // return JSON.stringify(err);
-    return null;
+  } catch (err) {
+    const error = Object.assign(
+      { message: err.message, stack: err.stack },
+      err[symbols.errorMeta] ? { meta: err[symbols.errorMeta] } : {},
+      err[symbols.nestedErrors]
+        ? {
+            errors: err[symbols.nestedErrors].map((cause) =>
+              Object.assign(
+                {
+                  message: cause.message,
+                  stack: cause.stack,
+                },
+                cause[symbols.errorMeta]
+                  ? { meta: cause[symbols.errorMeta] }
+                  : {},
+              ),
+            ),
+          }
+        : {},
+    );
+    return { error };
   }
 
   throw new Error('Unsupported RPC method');
