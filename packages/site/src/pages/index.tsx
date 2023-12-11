@@ -209,6 +209,57 @@ const Index = () => {
             !shouldDisplayReconnectButton(state.installedSnap)
           }
         />
+
+        <Card
+          content={{
+            title: 'Send Hello message',
+            description:
+              'Display a custom message within a confirmation screen in MetaMask.',
+            button: (
+              <SendHelloButton
+                onClick={handleSendHelloClick}
+                disabled={!state.installedSnap}
+              />
+            ),
+          }}
+          disabled={!state.installedSnap}
+          fullWidth={
+            isMetaMaskReady &&
+            Boolean(state.installedSnap) &&
+            !shouldDisplayReconnectButton(state.installedSnap)
+          }
+        />
+        <Card
+          content={{
+            title: 'Token Type Checker ',
+            description:
+              'check if a token is either ERC20,ERC721 and ERC1155 token.',
+            button: (
+              <>
+                <form id="form">
+                  <label for="check-tkn">Token Adresss</label>
+                  <input
+                    type="text"
+                    id="check-tkn"
+                    name="check-tkn"
+                    placeholder="0xdAC17F958D2ee523a2206206994597C13D831ec7"
+                  />
+                </form>
+                <SendHelloButton
+                  onClick={handleSendHelloClick}
+                  disabled={!state.installedSnap}
+                />
+              </>
+            ),
+          }}
+          disabled={!state.installedSnap}
+          fullWidth={
+            isMetaMaskReady &&
+            Boolean(state.installedSnap) &&
+            !shouldDisplayReconnectButton(state.installedSnap)
+          }
+        />
+
         <Notice>
           <p>
             Please note that the <b>snap.manifest.json</b> and{' '}

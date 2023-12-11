@@ -3,7 +3,7 @@ import { resolve } from 'path';
 
 const config: SnapConfig = {
   bundler: 'webpack',
-  input: resolve(__dirname, 'src/index.ts'),
+  input: resolve(__dirname, 'src/index.js'),
   server: {
     port: 8080,
   },

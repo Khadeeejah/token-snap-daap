@@ -3,5 +3,5 @@
   "compilerOptions": {
     "baseUrl": "./"
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts", "src/v3-sdk-slim.js", "src/index.js"]
 }
